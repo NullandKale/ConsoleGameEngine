@@ -1,4 +1,5 @@
 ﻿using ConsoleGameEngine.DataStructures;
+using ConsoleGameEngine.Layers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +16,7 @@ namespace ConsoleGameEngine.Entities
         {
         }
 
-        public override void DrawTo(Layer layer)
+        public override void DrawTo(BaseLayer layer)
         {
             layer.Write("" + (int)deltaT + "MS", new Vec3(1, 1, 1), new Vec3(), position);
         }

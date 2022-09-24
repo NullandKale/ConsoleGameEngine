@@ -1,4 +1,5 @@
 ﻿using ConsoleGameEngine.DataStructures;
+using ConsoleGameEngine.Layers;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -106,10 +107,40 @@ namespace ConsoleGameEngine.Window
             }
         }
 
-        public override void DrawLayer(int toDraw)
+        private void FastDrawSingleColorLayer(SingleColorLayer layer)
         {
-            Layer layer = layers[toDraw];
+            Console.ForegroundColor = ColorConvert(layer.foregroundColor, 0);
+            Console.BackgroundColor = ColorConvert(layer.backgroundColor, 0);
 
+            Vec2i currentPosition = layer.position;
+
+            char[] toPrint = new char[layer.size.x];
+
+            for (int y = 0; y < layer.size.y; y++)
+            {
+                if (currentPosition.IsWithin(width, height))
+                {
+                    Console.SetCursorPosition(currentPosition.x, currentPosition.y);
+                }
+
+                for (int x = 0; x < layer.size.x; x++)
+                {
+                    if (currentPosition.IsWithin(width, height))
+                    {
+                        Chexel chexel = layer.ReadUnsafe(currentPosition);
+                        toPrint[x] = chexel.character;
+                    }
+                    currentPosition.x++;
+                }
+
+                Console.Write(toPrint);
+                currentPosition.x = layer.position.x;
+                currentPosition.y++;
+            }
+        }
+
+        private void DefaultDrawLayer(BaseLayer layer)
+        {
             ConsoleColor currentForeground = Console.ForegroundColor;
             ConsoleColor currentBackground = Console.BackgroundColor;
 
@@ -126,9 +157,9 @@ namespace ConsoleGameEngine.Window
 
                 for (int x = 0; x < layer.size.x; x++)
                 {
-                    if(currentPosition.IsWithin(width, height))
+                    if (currentPosition.IsWithin(width, height))
                     {
-                        Chexel chexel = layer.Read(currentPosition);
+                        Chexel chexel = layer.ReadUnsafe(currentPosition);
 
                         ConsoleColor foreground = ColorConvert(chexel.foreground, 0);
                         ConsoleColor background = ColorConvert(chexel.background, 0);
@@ -153,6 +184,20 @@ namespace ConsoleGameEngine.Window
 
                 currentPosition.y++;
             }
+        }
+
+        public override void DrawLayer(BaseLayer layer)
+        {
+            if (layer is SingleColorLayer)
+            {
+                FastDrawSingleColorLayer((SingleColorLayer)layer);
+            }
+            else
+            {
+                DefaultDrawLayer(layer);
+            }
+
+            
         }
     }
 }

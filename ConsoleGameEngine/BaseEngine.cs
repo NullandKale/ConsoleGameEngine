@@ -1,10 +1,11 @@
 ﻿using ConsoleGameEngine.Entities;
+using ConsoleGameEngine.Layers;
 using ConsoleGameEngine.Window;
 using System.Diagnostics;
 
 namespace ConsoleGameEngine
 {
-    public abstract class Engine
+    public abstract class BaseEngine
     {
         public bool isRunning = false;
         protected volatile bool run = false;
@@ -16,8 +17,9 @@ namespace ConsoleGameEngine
         public IWindow window { get; protected set; }
 
         private Dictionary<int, HashSet<Entity>> entityList;
+        protected List<BaseLayer> layers;
 
-        protected Engine(IWindow window)
+        protected BaseEngine(IWindow window)
         {
             this.window = window;
 
@@ -27,6 +29,7 @@ namespace ConsoleGameEngine
             timer = new Stopwatch();
 
             entityList = new Dictionary<int, HashSet<Entity>>();
+            layers = new List<BaseLayer>();
         }
 
         public void AddEntity(int layer, Entity entity)
@@ -61,7 +64,7 @@ namespace ConsoleGameEngine
                     Update(deltaT);
                 }
 
-                window.Draw();
+                Draw();
 
                 timer.Stop();
                 deltaT = (float)timer.Elapsed.TotalMilliseconds;
@@ -97,9 +100,29 @@ namespace ConsoleGameEngine
                 foreach (Entity entity in kvp.Value)
                 {
                     entity.Update(deltaT);
-                    entity.DrawTo(window.GetLayer(kvp.Key));
+                    entity.DrawTo(GetLayer(kvp.Key));
                 }
             }
+        }
+
+        public virtual void Draw()
+        {
+            for (int i = 0; i < layers.Count; i++)
+            {
+                window.DrawLayer(layers[i]);
+            }
+        }
+
+        public int AddLayer(BaseLayer layer)
+        {
+            int id = layers.Count;
+            layers.Add(layer);
+            return id;
+        }
+
+        public BaseLayer GetLayer(int layer)
+        {
+            return layers[layer];
         }
 
     }

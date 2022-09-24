@@ -1,4 +1,5 @@
 ﻿using ConsoleGameEngine.DataStructures;
+using ConsoleGameEngine.Layers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,6 +18,6 @@ namespace ConsoleGameEngine.Entities
 
         public abstract void PreUpdate(float deltaT);
         public abstract void Update(float deltaT);
-        public abstract void DrawTo(Layer layer);
+        public abstract void DrawTo(BaseLayer layer);
     }
 }

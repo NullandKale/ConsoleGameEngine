@@ -1,20 +1,21 @@
 ﻿using ConsoleGameEngine;
 using ConsoleGameEngine.DataStructures;
 using ConsoleGameEngine.Entities;
+using ConsoleGameEngine.Layers;
 using ConsoleGameEngine.Window;
 
 namespace DrawDeltaT
 {
-    public class Sample : Engine
+    public class Sample : BaseEngine
     {
-        public Layer layer;
+        public BaseLayer layer;
 
         public Sample() : base(new ConsoleWindow())
         {
-            layer = new Layer(new Vec2i(), new Vec2i(window.width, window.height));
-            layer.Clear(new Chexel(' ', new Vec3(1, 0, 1), new Vec3(0, 0, 0)));
+            layer = new SingleColorLayer(new Vec2i(), new Vec2i(window.width, window.height), new Vec3(1, 1, 1), new Vec3(0, 0, 0));
+            layer.Clear(new Chexel(' ', new Vec3(1, 1, 1), new Vec3(0, 0, 0)));
 
-            window.AddLayer(layer);
+            AddLayer(layer);
 
             AddEntity(0, new FPSEntity(new Vec2i()));
         }
