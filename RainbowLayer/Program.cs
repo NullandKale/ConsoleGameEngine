@@ -111,7 +111,7 @@ namespace ColorPalette
 
             AddLayer(layer);
 
-            AddEntity(0, new UIText(new Vec2i(0, window.size.y - 3), "Press 1 - 3 to change color palette, press f1 to take a screenshot", new Vec3(), new Vec3(1, 1, 1)));
+            AddEntity(0, new UIText(new Vec2i(0, window.size.y - 3), "Press 1 - 4 to change color palette, press f1 to take a screenshot", new Vec3(), new Vec3(1, 1, 1)));
 
             Entity fps = new FPSEntity(new Vec2i(0, window.size.y - 2));
             AddEntity(0, fps);
@@ -140,6 +140,11 @@ namespace ColorPalette
                     {
                         (window as ConsoleWindow).palette = ConsolePalette.NameSearch;
                         return "Palette: NameSearch";
+                    }
+                case ConsoleKey.D4:
+                    {
+                        (window as ConsoleWindow).palette = ConsolePalette.GreyScale;
+                        return "Palette: GreyScale";
                     }
 
             }

@@ -14,12 +14,13 @@ namespace ConsoleGameEngine.Window
         BitBased,
         SudoHSV,
         NameSearch,
-
+        GreyScale,
     }
 
     public class ConsoleWindow : IWindow
     {
         public ConsolePalette palette = ConsolePalette.BitBased;
+        public Vec2i previousSize;
 
         public ConsoleWindow(ConsolePalette palette) : base(new Vec2i(Console.WindowWidth - 1, Console.WindowHeight))
         {
@@ -109,6 +110,16 @@ namespace ConsoleGameEngine.Window
                             }
                         }
                         return ret;
+                    }
+                case ConsolePalette.GreyScale:
+                    {
+                        switch ((int)(color.GetBrightness() * 7))
+                        {
+                            case 0: return ConsoleColor.Black;
+                            case 1: return ConsoleColor.DarkGray;
+                            case 2: return ConsoleColor.Gray;
+                            default: return ConsoleColor.White;
+                        }
                     }
                 default:
                     {
@@ -206,8 +217,17 @@ namespace ConsoleGameEngine.Window
             {
                 DefaultDrawLayer(layer);
             }
+        }
 
-            
+        public override void UpdateWindow()
+        {
+            int currentWidth = Console.WindowWidth;
+            int currentHeight = Console.WindowHeight - 1;
+
+            if(currentWidth != size.x || currentHeight != size.y)
+            {
+                RequestSizeUpdate(new Vec2i(currentWidth, currentHeight));
+            }
         }
     }
 }

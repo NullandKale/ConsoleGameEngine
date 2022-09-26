@@ -3,6 +3,7 @@ using ConsoleGameEngine.Entities;
 using ConsoleGameEngine.Layers;
 using ConsoleGameEngine.Window;
 using System.Diagnostics;
+using System.Drawing;
 
 namespace ConsoleGameEngine
 {
@@ -23,6 +24,7 @@ namespace ConsoleGameEngine
         protected BaseEngine(IWindow window)
         {
             this.window = window;
+            window.SetOnWindowSizeUpdate(UpdateSize);
 
             thread = new Thread(threadAction);
             thread.IsBackground = true;
@@ -136,6 +138,8 @@ namespace ConsoleGameEngine
 
         protected virtual void Update(float deltaT)
         {
+            window.UpdateWindow();
+
             foreach (KeyValuePair<int, HashSet<Entity>> kvp in entityList)
             {
                 foreach (Entity entity in kvp.Value)
