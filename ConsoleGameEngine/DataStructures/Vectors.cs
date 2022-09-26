@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Numerics;
 using System.Text;
@@ -38,6 +39,11 @@ namespace ConsoleGameEngine.DataStructures
         public bool IsWithin(int width, int height) 
         {
             return x < width && y < height && x >= 0 && y >= 0;
+        }
+
+        public bool IsWithin(Vec2i other)
+        {
+            return x < other.x && y < other.y && x >= 0 && y >= 0;
         }
 
         public static Vec2i operator +(Vec2i v1, Vec2i v2)
@@ -176,6 +182,16 @@ namespace ConsoleGameEngine.DataStructures
             return new Vec3(v1.x + v, v1.y + v, v1.z + v);
         }
 
+        public static Vec3 operator -(Vec3 v1, float v)
+        {
+            return new Vec3(v1.x - v, v1.y - v, v1.z - v);
+        }
+
+        public static Vec3 operator -(float v, Vec3 v1)
+        {
+            return new Vec3(v1.x - v, v1.y - v, v1.z - v);
+        }
+
         public static Vec3 operator /(Vec3 v1, float v)
         {
             return v1 * (1.0f / v);
@@ -232,6 +248,25 @@ namespace ConsoleGameEngine.DataStructures
             float rParallel = (iorFrom * cosThetaI - iorTo * cosThetaT) / (iorFrom * cosThetaI + iorTo * cosThetaT);
             return (rPerpendicular * rPerpendicular + rParallel * rParallel) / 2f;
         }
+        public static Vec3 Clamp(Vec3 v, Vec3 min, Vec3 max)
+        {
+            return new Vec3(Math.Clamp(v.x, min.x, max.x), Math.Clamp(v.y, min.y, max.y), Math.Clamp(v.z, min.z, max.z));
+        }
+
+        public static Vec3 Abs(Vec3 v)
+        {
+            return new Vec3(Math.Abs(v.x), Math.Abs(v.y), Math.Abs(v.z));
+        }
+
+        public static Vec3 Mod(Vec3 v, float f)
+        {
+            return v - f * new Vec3(Math.Floor(v.x / f), Math.Floor(v.y / f), Math.Floor(v.z / f));
+        }
+
+        public static Vec3 Mix(Vec3 x, Vec3 y, float a)
+        {
+            return x * (1 - a) + y * a;
+        }
 
         public static Vec3 aces_approx(Vec3 v)
         {
@@ -249,6 +284,56 @@ namespace ConsoleGameEngine.DataStructures
         {
             return v / (1.0f + v);
         }
+
+        public static Vec3 HsvToRgb(int h, float s, float v)
+        {
+            float hp = h / 60.0f;
+            float c = s * v;
+            float x = c * (1f - Math.Abs(hp % 2.0f - 1f));
+            float m = v - c;
+            float r = 0, g = 0, b = 0;
+            if (hp <= 1)
+            {
+                r = c;
+                g = x;
+            }
+            else if (hp <= 2)
+            {
+                r = x;
+                g = c;
+            }
+            else if (hp <= 3)
+            {
+                g = c;
+                b = x;
+            }
+            else if (hp <= 4)
+            {
+                g = x;
+                b = c;
+            }
+            else if (hp <= 5)
+            {
+                r = x;
+                b = c;
+            }
+            else
+            {
+                r = c;
+                b = x;
+            }
+            r += m;
+            g += m;
+            b += m;
+            return new Vec3(r, g, b);
+        }
+
+        //public static Vec3 hsb2rgb(Vec3 color)
+        //{
+        //    Vec3 rgb = Clamp(Abs(Mod(color.x * 6f + new Vec3(0, 4, 2), 6f) - 3f) - 1f, new Vec3(), new Vec3(1,1,1));
+        //    rgb = rgb * rgb * (3f - 2f * rgb);
+        //    return color.z * Mix(new Vec3(1, 1, 1), rgb, color.y);
+        //}
 
         public static bool Equals(Vec3 a, Vec3 b)
         {
@@ -280,6 +365,11 @@ namespace ConsoleGameEngine.DataStructures
         public static implicit operator Vec3(Vector4 d)
         {
             return new Vec3(d.X, d.Y, d.Z);
+        }
+
+        public static implicit operator Color(Vec3 v)
+        {
+            return Color.FromArgb((int)(v.x * 255), (int)(v.y * 255), (int)(v.z * 255f));
         }
     }
 

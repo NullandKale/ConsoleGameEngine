@@ -3,13 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.32916.344
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleGameEngine", "ConsoleGameEngine\ConsoleGameEngine.csproj", "{7199485B-DC50-4E56-B13B-D90D33752090}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleGameEngine", "ConsoleGameEngine\ConsoleGameEngine.csproj", "{7199485B-DC50-4E56-B13B-D90D33752090}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{873580BE-7088-4947-AAD0-BAD4871FC56F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SolidFill", "SolidFill\SolidFill.csproj", "{CCD09840-8224-4EF8-89AC-0C748075F330}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SolidFill", "SolidFill\SolidFill.csproj", "{CCD09840-8224-4EF8-89AC-0C748075F330}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DrawDeltaT", "DrawDeltaT\DrawDeltaT.csproj", "{C6AF5871-2D91-49CF-96A7-4199B4DECFF0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DrawDeltaT", "DrawDeltaT\DrawDeltaT.csproj", "{C6AF5871-2D91-49CF-96A7-4199B4DECFF0}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ColorPalette", "RainbowLayer\ColorPalette.csproj", "{95846A16-84B7-4120-8DE6-BF31E18F59F3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,6 +31,10 @@ Global
 		{C6AF5871-2D91-49CF-96A7-4199B4DECFF0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C6AF5871-2D91-49CF-96A7-4199B4DECFF0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C6AF5871-2D91-49CF-96A7-4199B4DECFF0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{95846A16-84B7-4120-8DE6-BF31E18F59F3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{95846A16-84B7-4120-8DE6-BF31E18F59F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{95846A16-84B7-4120-8DE6-BF31E18F59F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{95846A16-84B7-4120-8DE6-BF31E18F59F3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -36,6 +42,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{CCD09840-8224-4EF8-89AC-0C748075F330} = {873580BE-7088-4947-AAD0-BAD4871FC56F}
 		{C6AF5871-2D91-49CF-96A7-4199B4DECFF0} = {873580BE-7088-4947-AAD0-BAD4871FC56F}
+		{95846A16-84B7-4120-8DE6-BF31E18F59F3} = {873580BE-7088-4947-AAD0-BAD4871FC56F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {61366816-153E-4D7E-8124-1FE16C731445}

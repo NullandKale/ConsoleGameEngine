@@ -1,4 +1,5 @@
-﻿using ConsoleGameEngine.Entities;
+﻿using ConsoleGameEngine.DataStructures;
+using ConsoleGameEngine.Entities;
 using ConsoleGameEngine.Layers;
 using ConsoleGameEngine.Window;
 using System.Diagnostics;
@@ -32,6 +33,25 @@ namespace ConsoleGameEngine
             layers = new List<BaseLayer>();
         }
 
+        public void UpdateSize(Vec2i size)
+        {
+            window.UpdateSize(size);
+
+            foreach(var layer in layers)
+            {
+                layer.SetSize(size);
+            }
+        }
+
+        public void SetWindow(IWindow window)
+        {
+            lock(this.window)
+            {
+                this.window = window;
+                UpdateSize(window.size);
+            }
+        }
+
         public void AddEntity(int layer, Entity entity)
         {
             if(entityList.ContainsKey(layer))
@@ -42,12 +62,21 @@ namespace ConsoleGameEngine
             {
                 HashSet<Entity> list = new HashSet<Entity>();
                 list.Add(entity);
-
                 entityList.Add(layer, list);
             }
         }
 
-        public void RemoveEntity(int layer, Entity entity) { }
+        public void RemoveEntity(int layer, Entity entity) 
+        {
+            if(entityList.ContainsKey(layer))
+            {
+                entityList[layer].Remove(entity);
+                if (entityList[layer].Count == 0)
+                {
+                    entityList.Remove(layer);
+                }
+            }
+        }
 
         private void threadAction()
         {
@@ -56,6 +85,10 @@ namespace ConsoleGameEngine
             while(run)
             {
                 timer.Start();
+
+                ClearLayers();
+
+                Input.UpdateEventListners();
 
                 PreUpdate(deltaT);
 
@@ -82,7 +115,15 @@ namespace ConsoleGameEngine
             isRunning = true;
         }
 
-        public virtual void PreUpdate(float deltaT)
+        protected virtual void ClearLayers()
+        {
+            for(int i = 0; i < layers.Count; i++)
+            {
+                layers[i].Clear();
+            }
+        }
+
+        protected virtual void PreUpdate(float deltaT)
         {
             foreach(KeyValuePair<int, HashSet<Entity>> kvp in entityList)
             {
@@ -93,7 +134,7 @@ namespace ConsoleGameEngine
             }
         }
 
-        public virtual void Update(float deltaT)
+        protected virtual void Update(float deltaT)
         {
             foreach (KeyValuePair<int, HashSet<Entity>> kvp in entityList)
             {
@@ -105,11 +146,14 @@ namespace ConsoleGameEngine
             }
         }
 
-        public virtual void Draw()
+        protected virtual void Draw()
         {
-            for (int i = 0; i < layers.Count; i++)
+            lock(window)
             {
-                window.DrawLayer(layers[i]);
+                for (int i = 0; i < layers.Count; i++)
+                {
+                    window.DrawLayer(layers[i]);
+                }
             }
         }
 

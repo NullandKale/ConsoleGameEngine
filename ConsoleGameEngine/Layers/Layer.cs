@@ -22,7 +22,7 @@ namespace ConsoleGameEngine.Layers
 
         }
 
-        public override void Clear(Chexel clear)
+        public override void Clear()
         {
             for (int x = 0; x < size.x; x++)
             {
@@ -40,13 +40,13 @@ namespace ConsoleGameEngine.Layers
             return new Chexel(characters[pos.x, pos.y], foregroundColors[pos.x, pos.y], backgroundColors[pos.x, pos.y]);
         }
 
-        public override void SetSize(Vec2i size, Chexel clear)
+        public override void SetSize(Vec2i size)
         {
             backgroundColors = new Vec3[size.x, size.y];
             foregroundColors = new Vec3[size.x, size.y];
             characters = new char[size.x, size.y];
 
-            base.SetSize(size, clear);
+            base.SetSize(size);
         }
 
         protected override void Write(Chexel toWrite, Vec2i pos)
@@ -61,6 +61,7 @@ namespace ConsoleGameEngine.Layers
     {
         public Vec2i position;
         public Vec2i size;
+        public Chexel clear;
 
         protected BaseLayer(Vec2i position, Vec2i size)
         {
@@ -73,11 +74,15 @@ namespace ConsoleGameEngine.Layers
             return size;
         }
 
-        public virtual void SetSize(Vec2i size, Chexel clear)
+        public virtual void Resize(Vec2i size)
+        {
+
+        }
+
+        public virtual void SetSize(Vec2i size)
         {
             this.size = size;
-
-            Clear(clear);
+            Clear();
         }
 
         public virtual Vec2i GetPosition()
@@ -90,7 +95,12 @@ namespace ConsoleGameEngine.Layers
             this.position = position;
         }
 
-        public abstract void Clear(Chexel clear);
+        public virtual void SetClear(Chexel clear)
+        {
+            this.clear = clear;
+        }
+
+        public abstract void Clear();
 
         protected abstract Chexel Read(Vec2i pos);
 

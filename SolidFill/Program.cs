@@ -10,10 +10,10 @@ namespace SolidFill
     {
         public BaseLayer layer;
 
-        public Sample() : base(new ConsoleWindow())
+        public Sample() : base(new ConsoleWindow(ConsolePalette.SudoHSV))
         {
-            layer = new SingleColorLayer(new Vec2i(), new Vec2i(window.width, window.height), new Vec3(1,0,1), new Vec3());
-            layer.Clear(new Chexel('X', new Vec3(1, 0, 1), new Vec3(0, 0, 0)));
+            layer = new SingleColorLayer(new Vec2i(), window.size, new Vec3(1,0,1), new Vec3());
+            layer.SetClear(new Chexel('X', new Vec3(1, 0, 1), new Vec3(0, 0, 0)));
 
             AddLayer(layer);
         }

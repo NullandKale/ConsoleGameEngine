@@ -9,14 +9,24 @@ using System.Threading.Tasks;
 
 namespace ConsoleGameEngine.Window
 {
+    public enum ConsolePalette
+    {
+        BitBased,
+        SudoHSV,
+        NameSearch,
+
+    }
+
     public class ConsoleWindow : IWindow
     {
+        public ConsolePalette palette = ConsolePalette.BitBased;
 
-        public ConsoleWindow() : base(Console.WindowWidth - 1, Console.WindowHeight)
+        public ConsoleWindow(ConsolePalette palette) : base(new Vec2i(Console.WindowWidth - 1, Console.WindowHeight))
         {
+            this.palette = palette;
         }
 
-        private static ConsoleColor ColorConvert(Vec3 c, int pallet)
+        private ConsoleColor ColorConvert(Vec3 c, ConsolePalette palette)
         {
             float max = Math.Max(c.x, Math.Max(c.y, c.z));
             if (max > 1)
@@ -30,9 +40,9 @@ namespace ConsoleGameEngine.Window
 
             Color color = Color.FromArgb(r, g, b);
 
-            switch (pallet)
+            switch (palette)
             {
-                case 0:
+                case ConsolePalette.BitBased:
                     {
                         int index = (r > 128 | g > 128 | b > 128) ? 8 : 0; // Bright bit
 
@@ -42,7 +52,7 @@ namespace ConsoleGameEngine.Window
 
                         return (ConsoleColor)index;
                     }
-                case 1:
+                case ConsolePalette.SudoHSV:
                     {
                         if (color.GetSaturation() < 0.5)
                         {
@@ -80,16 +90,16 @@ namespace ConsoleGameEngine.Window
                             default: return ConsoleColor.Red;
                         }
                     }
-                case 2:
+                case ConsolePalette.NameSearch:
                     {
                         ConsoleColor ret = 0;
                         double rr = r, gg = g, bb = b, delta = double.MaxValue;
 
                         foreach (ConsoleColor cc in Enum.GetValues(typeof(ConsoleColor)))
                         {
-                            var n = Enum.GetName(typeof(ConsoleColor), cc);
-                            var c1 = Color.FromName(n == "DarkYellow" ? "Orange" : n); // bug fix
-                            var t = Math.Pow(c1.R - rr, 2.0) + Math.Pow(c1.G - gg, 2.0) + Math.Pow(c1.B - bb, 2.0);
+                            string? n = Enum.GetName(typeof(ConsoleColor), cc);
+                            Color c1 = Color.FromName(n == "DarkYellow" ? "Orange" : n); // bug fix
+                            double t = Math.Pow(c1.R - rr, 2.0) + Math.Pow(c1.G - gg, 2.0) + Math.Pow(c1.B - bb, 2.0);
                             if (t == 0.0)
                                 return cc;
                             if (t < delta)
@@ -109,8 +119,8 @@ namespace ConsoleGameEngine.Window
 
         private void FastDrawSingleColorLayer(SingleColorLayer layer)
         {
-            Console.ForegroundColor = ColorConvert(layer.foregroundColor, 0);
-            Console.BackgroundColor = ColorConvert(layer.backgroundColor, 0);
+            Console.ForegroundColor = ColorConvert(layer.foregroundColor, palette);
+            Console.BackgroundColor = ColorConvert(layer.backgroundColor, palette);
 
             Vec2i currentPosition = layer.position;
 
@@ -118,14 +128,14 @@ namespace ConsoleGameEngine.Window
 
             for (int y = 0; y < layer.size.y; y++)
             {
-                if (currentPosition.IsWithin(width, height))
+                if (currentPosition.IsWithin(size))
                 {
                     Console.SetCursorPosition(currentPosition.x, currentPosition.y);
                 }
 
                 for (int x = 0; x < layer.size.x; x++)
                 {
-                    if (currentPosition.IsWithin(width, height))
+                    if (currentPosition.IsWithin(size))
                     {
                         Chexel chexel = layer.ReadUnsafe(currentPosition);
                         toPrint[x] = chexel.character;
@@ -150,19 +160,19 @@ namespace ConsoleGameEngine.Window
             {
                 currentPosition.x = layer.position.x;
 
-                if (currentPosition.IsWithin(width, height))
+                if (currentPosition.IsWithin(size))
                 {
                     Console.SetCursorPosition(currentPosition.x, currentPosition.y);
                 }
 
                 for (int x = 0; x < layer.size.x; x++)
                 {
-                    if (currentPosition.IsWithin(width, height))
+                    if (currentPosition.IsWithin(size))
                     {
                         Chexel chexel = layer.ReadUnsafe(currentPosition);
 
-                        ConsoleColor foreground = ColorConvert(chexel.foreground, 0);
-                        ConsoleColor background = ColorConvert(chexel.background, 0);
+                        ConsoleColor foreground = ColorConvert(chexel.foreground, palette);
+                        ConsoleColor background = ColorConvert(chexel.background, palette);
 
                         if (currentForeground != foreground)
                         {

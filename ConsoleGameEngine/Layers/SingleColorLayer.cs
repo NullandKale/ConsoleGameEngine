@@ -20,13 +20,13 @@ namespace ConsoleGameEngine.Layers
             chars = new char[size.x, size.y];
         }
 
-        public override void SetSize(Vec2i size, Chexel clear)
+        public override void SetSize(Vec2i size)
         {
             chars = new char[size.x, size.y];
-            base.SetSize(size, clear);
+            base.SetSize(size);
         }
 
-        public override void Clear(Chexel clear)
+        public override void Clear()
         {
             backgroundColor = clear.background;
             foregroundColor = clear.foreground;
