@@ -8,42 +8,18 @@ using ConsoleGameEngine.Window;
 
 namespace ColorPalette
 {
-    public class RainbowLayer : BaseLayer
+    public class RainbowLayer : FullScreenLayer
     {
-        private char[,] chars;
         public float totalTimeMS = 0;
 
-        public bool overrideForeground = false;
-        public bool overrideBackground = false;
-        public Vec3 overrideForegroundColor;
-        public Vec3 overrideBackgroundColor;
+        bool colorForeground = false;
 
         public RainbowLayer(Vec2i position, Vec2i size, BaseEngine engine) : base(position, size)
         {
-            chars = new char[size.x, size.y];
-
             engine.AddEntity(0, new UpdateEntity((deltaT) => 
             {
                 totalTimeMS += deltaT;
             }));
-        }
-
-        public override void Clear()
-        {
-            chars = new char[size.x, size.y];
-
-            for (int x = 0; x < size.x; x++)
-            {
-                for (int y = 0; y < size.y; y++)
-                {
-                    chars[x, y] = clear.character;
-                }
-            }
-        }
-
-        public override void Resize(Vec2i size)
-        {
-            SetSize(size);
         }
 
         protected override Chexel Read(Vec2i pos)
@@ -51,25 +27,19 @@ namespace ColorPalette
             float tx = (float)pos.x / (float)size.x;
             float ty = (float)pos.y / (float)size.y;
 
-            Vec3 fore = Vec3.HsvToRgb((int)(tx * 360f), (MathF.Sin(totalTimeMS / 1000f) + 1f) / 2f, ty);
-            Vec3 back = fore;
+            Vec3 fore = foregroundColors[pos.x, pos.y];
+            Vec3 back = backgroundColors[pos.x, pos.y];
 
-            if(overrideBackground)
+            if(colorForeground)
             {
-                back = overrideBackgroundColor;
+                fore = Vec3.HsvToRgb((int)(tx * 360f), (MathF.Sin(totalTimeMS / 1000f) + 1f) / 2f, ty);
+            }
+            else
+            {
+                back = Vec3.HsvToRgb((int)(tx * 360f), (MathF.Sin(totalTimeMS / 1000f) + 1f) / 2f, ty);
             }
 
-            if(overrideForeground)
-            {
-                fore = overrideForegroundColor;
-            }
-
-            return new Chexel(chars[pos.x, pos.y], fore, back);
-        }
-
-        protected override void Write(Chexel toWrite, Vec2i pos)
-        {
-            chars[pos.x, pos.y] = toWrite.character;
+            return new Chexel(characters[pos.x, pos.y], fore, back);
         }
 
         private class UpdateEntity : Entity
@@ -84,6 +54,11 @@ namespace ColorPalette
             public override void DrawTo(BaseLayer layer)
             {
                 //no draw
+            }
+
+            public override Vec2i GetSize()
+            {
+                return new Vec2i();
             }
 
             public override void PreUpdate(float deltaT)
@@ -101,55 +76,54 @@ namespace ColorPalette
     public class Sample : BaseEngine
     {
         public RainbowLayer layer;
-
         public Sample() : base(new ConsoleWindow(ConsolePalette.BitBased))
         {
             layer = new RainbowLayer(new Vec2i(), window.size, this);
-            layer.overrideForeground = true;
-            layer.overrideForegroundColor = new Vec3(0, 0, 0);
-            layer.SetClear(new Chexel(' ', new Vec3(1, 0, 1), new Vec3(0, 0, 0)));
+            layer.SetClear(new Chexel(' ', new Vec3(), new Vec3(1,1,1)));
 
             AddLayer(layer);
-
-            AddEntity(0, new UIText(new Vec2i(0, window.size.y - 3), "Press 1 - 4 to change color palette, press f1 to take a screenshot", new Vec3(), new Vec3(1, 1, 1)));
-
-            Entity fps = new FPSEntity(new Vec2i(0, window.size.y - 2));
-            AddEntity(0, fps);
-
-            Entity palette = new UIText(new Vec2i(0, window.size.y - 1), "Palette: BitBased", new Vec3(), new Vec3(1, 1, 1),  updatePalette);
-            AddEntity(0, palette);
-
             AddEntity(0, new ScreenshotEntity(new Vec2i(), new Vec2i(533, 300), this));
+
+            UIMenu menu = new UIMenu(new Vec2i(window.size.x / 2, window.size.y / 2));
+            menu.AddEntity(new FPSEntity(new Vec2i()));
+            menu.AddEntity(new UIText(new Vec2i(), "Press 1 - 4 to change color palette, press f1 to take a screenshot", new Vec3(), new Vec3(1, 1, 1)));
+            menu.AddEntity(new UIText(new Vec2i(0, window.size.y - 1), "Palette: BitBased", new Vec3(), new Vec3(1, 1, 1), updatePalette));
+
+            menu.CenterOn(new Vec2i(window.size.x / 2, window.size.y / 2));
+
+            AddEntity(0, menu);
         }
 
-        public string? updatePalette(ConsoleKeyInfo key)
+        public void updatePalette(UIText entity, ConsoleKeyInfo key)
         {
             switch(key.Key)
             {
                 case ConsoleKey.D1:
                     {
-                        (window as ConsoleWindow).palette = ConsolePalette.BitBased;
-                        return "Palette: BitBased";
+                        (window as ConsoleWindow)!.palette = ConsolePalette.BitBased;
+                        entity.text = "Palette: BitBased";
+                        break;
                     }
                 case ConsoleKey.D2:
                     {
-                        (window as ConsoleWindow).palette = ConsolePalette.SudoHSV;
-                        return "Palette: SudoHSV";
+                        (window as ConsoleWindow)!.palette = ConsolePalette.SudoHSV;
+                        entity.text = "Palette: SudoHSV";
+                        break;
                     }
                 case ConsoleKey.D3:
                     {
-                        (window as ConsoleWindow).palette = ConsolePalette.NameSearch;
-                        return "Palette: NameSearch";
+                        (window as ConsoleWindow)!.palette = ConsolePalette.NameSearch;
+                        entity.text = "Palette: NameSearch";
+                        break;
                     }
                 case ConsoleKey.D4:
                     {
-                        (window as ConsoleWindow).palette = ConsolePalette.GreyScale;
-                        return "Palette: GreyScale";
+                        (window as ConsoleWindow)!.palette = ConsolePalette.GreyScale;
+                        entity.text = "Palette: GreyScale";
+                        break;
                     }
 
             }
-
-            return null;
         }
     }
 

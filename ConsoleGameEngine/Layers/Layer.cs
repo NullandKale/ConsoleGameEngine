@@ -10,9 +10,9 @@ namespace ConsoleGameEngine.Layers
 {
     public class Layer : BaseLayer
     {
-        private Vec3[,] backgroundColors;
-        private Vec3[,] foregroundColors;
-        private char[,] characters;
+        protected Vec3[,] backgroundColors;
+        protected Vec3[,] foregroundColors;
+        protected char[,] characters;
 
         public Layer(Vec2i position, Vec2i size) : base(position, size)
         {

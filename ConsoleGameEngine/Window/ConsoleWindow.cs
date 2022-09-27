@@ -17,6 +17,47 @@ namespace ConsoleGameEngine.Window
         GreyScale,
     }
 
+    public static class ConsoleUtils
+    {
+        public static readonly ConsoleColor defaultForeground = ConsoleColor.White;
+        public static readonly ConsoleColor defaultBackground = ConsoleColor.Black;
+
+        private static ConsoleColor foreground = ConsoleColor.White;
+        private static ConsoleColor background = ConsoleColor.Black;
+
+        public static bool IsCurrentConsoleColors(ConsoleColor f, ConsoleColor b)
+        {
+            return f == foreground && b == background;
+        }
+
+        public static void ResetConsoleColor()
+        {
+            foreground = ConsoleColor.White;
+            background = ConsoleColor.Black;
+
+            Console.ForegroundColor = foreground;
+            Console.BackgroundColor = background;
+        }
+
+        public static void SetConsoleForegound(ConsoleColor color)
+        {
+            if(color != foreground) 
+            {
+                foreground = color;
+                Console.ForegroundColor = foreground;
+            }
+        }
+
+        public static void SetConsoleBackground(ConsoleColor color)
+        {
+            if (color != background)
+            {
+                background = color;
+                Console.BackgroundColor = background;
+            }
+        }
+    }
+
     public class ConsoleWindow : IWindow
     {
         public ConsolePalette palette = ConsolePalette.BitBased;
@@ -130,8 +171,8 @@ namespace ConsoleGameEngine.Window
 
         private void FastDrawSingleColorLayer(SingleColorLayer layer)
         {
-            Console.ForegroundColor = ColorConvert(layer.foregroundColor, palette);
-            Console.BackgroundColor = ColorConvert(layer.backgroundColor, palette);
+            ConsoleUtils.SetConsoleBackground(ColorConvert(layer.backgroundColor, palette));
+            ConsoleUtils.SetConsoleForegound(ColorConvert(layer.foregroundColor, palette));
 
             Vec2i currentPosition = layer.position;
 
@@ -160,11 +201,57 @@ namespace ConsoleGameEngine.Window
             }
         }
 
+        private void FastDrawLayer(BaseLayer layer)
+        {
+            Vec2i currentPosition = layer.position;
+
+            ConsoleUtils.ResetConsoleColor();
+
+            for (int y = 0; y < layer.size.y; y++)
+            {
+                currentPosition.x = layer.position.x;
+
+                if (currentPosition.IsWithin(size))
+                {
+                    Console.SetCursorPosition(currentPosition.x, currentPosition.y);
+                }
+
+                List<char> toPrint = new List<char>(layer.size.x);
+
+                for (int x = 0; x < layer.size.x; x++)
+                {
+                    if (currentPosition.IsWithin(size))
+                    {
+                        Chexel chexel = layer.ReadUnsafe(currentPosition);
+
+                        ConsoleColor nextForeground = ColorConvert(chexel.foreground, palette);
+                        ConsoleColor nextBackground = ColorConvert(chexel.background, palette);
+
+                        if(!ConsoleUtils.IsCurrentConsoleColors(nextForeground, nextBackground))
+                        {
+                            Console.Write(toPrint.ToArray());
+                            toPrint.Clear();
+                        }
+
+                        toPrint.Add(chexel.character);
+                        ConsoleUtils.SetConsoleForegound(nextForeground);
+                        ConsoleUtils.SetConsoleBackground(nextBackground);
+                    }
+
+                    currentPosition.x++;
+                }
+
+                if(toPrint.Count > 0)
+                {
+                    Console.Write(toPrint.ToArray());
+                }
+
+                currentPosition.y++;
+            }
+        }
+
         private void DefaultDrawLayer(BaseLayer layer)
         {
-            ConsoleColor currentForeground = Console.ForegroundColor;
-            ConsoleColor currentBackground = Console.BackgroundColor;
-
             Vec2i currentPosition = layer.position;
 
             for (int y = 0; y < layer.size.y; y++)
@@ -185,18 +272,8 @@ namespace ConsoleGameEngine.Window
                         ConsoleColor foreground = ColorConvert(chexel.foreground, palette);
                         ConsoleColor background = ColorConvert(chexel.background, palette);
 
-                        if (currentForeground != foreground)
-                        {
-                            Console.ForegroundColor = foreground;
-                            currentForeground = foreground;
-                        }
-
-                        if (currentBackground != background)
-                        {
-                            Console.BackgroundColor = background;
-                            currentBackground = background;
-                        }
-
+                        ConsoleUtils.SetConsoleForegound(foreground);
+                        ConsoleUtils.SetConsoleBackground(background);
                         Console.Write(chexel.character);
                     }
 
@@ -215,7 +292,7 @@ namespace ConsoleGameEngine.Window
             }
             else
             {
-                DefaultDrawLayer(layer);
+                FastDrawLayer(layer);
             }
         }
 

@@ -41,6 +41,11 @@ namespace ConsoleGameEngine.Entities.Utilities
             return;
         }
 
+        public override Vec2i GetSize()
+        {
+            return new Vec2i();
+        }
+
         public override void PreUpdate(float deltaT)
         {
 
