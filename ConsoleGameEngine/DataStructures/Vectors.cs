@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
 using System.Numerics;
@@ -17,6 +18,31 @@ namespace ConsoleGameEngine.DataStructures
         {
             this.x = x;
             this.y = y;
+        }
+
+        public static explicit operator Vec2(Vec2i v)
+        {
+            return new Vec2(v.x, v.y);
+        }
+
+        public static Vec2 operator *(Vec2 v1, Vec2 v2)
+        {
+            return new Vec2(v1.x * v2.x, v1.y * v2.y);
+        }
+
+        public static Vec2 operator *(Vec2 v1, float v2)
+        {
+            return new Vec2(v1.x * v2, v1.y * v2);
+        }
+
+        public static Vec2 operator +(Vec2 v1, Vec2 v2)
+        {
+            return new Vec2(v1.x + v2.x, v1.y + v2.y);
+        }
+
+        public static Vec2 operator -(Vec2 v1, Vec2 v2)
+        {
+            return new Vec2(v1.x - v2.x, v1.y - v2.y);
         }
     }
 
@@ -46,6 +72,29 @@ namespace ConsoleGameEngine.DataStructures
             return x < other.x && y < other.y && x >= 0 && y >= 0;
         }
 
+        public void Clamp(Vec2i size)
+        {
+            if(x < 0)
+            {
+                x = 0;
+            }
+
+            if (y < 0)
+            {
+                y = 0;
+            }
+
+            if (x > size.x)
+            {
+                x = size.x;
+            }
+
+            if (y > size.y)
+            {
+                y = size.y;
+            }
+        }
+
         public static Vec2i operator +(Vec2i v1, Vec2i v2)
         {
             return new Vec2i(v1.x + v2.x, v1.y + v2.y);
@@ -54,6 +103,45 @@ namespace ConsoleGameEngine.DataStructures
         public static Vec2i operator -(Vec2i v1, Vec2i v2)
         {
             return new Vec2i(v1.x - v2.x, v1.y - v2.y);
+        }
+
+        public static Vec2i operator -(Vec2i v1)
+        {
+            return new Vec2i(-v1.x, -v1.y);
+        }
+
+        public static explicit operator Vec2i(Vec2 v)
+        {
+            return new Vec2i((int)v.x, (int)v.y);
+        }
+
+        public static Vec2i operator /(Vec2i v1, int v2)
+        {
+            return new Vec2i(v1.x / v2, v1.y / v2);
+        }
+
+        public static bool operator ==(Vec2i v1, Vec2i v2)
+        {
+            return v1.Equals(v2);
+        }
+        public static bool operator !=(Vec2i v1, Vec2i v2)
+        {
+            return !v1.Equals(v2);
+        }
+
+        public override bool Equals([NotNullWhen(true)] object? obj)
+        {
+            if (obj == null)
+            {
+                return false;
+            }
+            
+            if(obj is Vec2i v)
+            {
+                return x.Equals(v.x) && y.Equals(v.y);
+            }
+
+            return false;
         }
     }
 

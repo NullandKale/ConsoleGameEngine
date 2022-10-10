@@ -13,6 +13,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DrawDeltaT", "DrawDeltaT\Dr
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ColorPalette", "RainbowLayer\ColorPalette.csproj", "{95846A16-84B7-4120-8DE6-BF31E18F59F3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Snake", "Snake\Snake.csproj", "{5E812205-847C-408E-AB8C-55A6B2E5CD40}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,6 +37,10 @@ Global
 		{95846A16-84B7-4120-8DE6-BF31E18F59F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{95846A16-84B7-4120-8DE6-BF31E18F59F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{95846A16-84B7-4120-8DE6-BF31E18F59F3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5E812205-847C-408E-AB8C-55A6B2E5CD40}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5E812205-847C-408E-AB8C-55A6B2E5CD40}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5E812205-847C-408E-AB8C-55A6B2E5CD40}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5E812205-847C-408E-AB8C-55A6B2E5CD40}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -43,6 +49,7 @@ Global
 		{CCD09840-8224-4EF8-89AC-0C748075F330} = {873580BE-7088-4947-AAD0-BAD4871FC56F}
 		{C6AF5871-2D91-49CF-96A7-4199B4DECFF0} = {873580BE-7088-4947-AAD0-BAD4871FC56F}
 		{95846A16-84B7-4120-8DE6-BF31E18F59F3} = {873580BE-7088-4947-AAD0-BAD4871FC56F}
+		{5E812205-847C-408E-AB8C-55A6B2E5CD40} = {873580BE-7088-4947-AAD0-BAD4871FC56F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {61366816-153E-4D7E-8124-1FE16C731445}

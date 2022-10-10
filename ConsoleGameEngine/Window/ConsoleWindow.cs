@@ -63,7 +63,7 @@ namespace ConsoleGameEngine.Window
         public ConsolePalette palette = ConsolePalette.BitBased;
         public Vec2i previousSize;
 
-        public ConsoleWindow(ConsolePalette palette) : base(new Vec2i(Console.WindowWidth - 1, Console.WindowHeight))
+        public ConsoleWindow(ConsolePalette palette = ConsolePalette.BitBased) : base(new Vec2i(Console.WindowWidth - 1, Console.WindowHeight))
         {
             this.palette = palette;
         }

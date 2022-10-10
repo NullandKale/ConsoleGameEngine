@@ -129,7 +129,8 @@ namespace ConsoleGameEngine
         {
             foreach(KeyValuePair<int, HashSet<Entity>> kvp in entityList)
             {
-                foreach(Entity entity in kvp.Value)
+                HashSet<Entity> entities = new HashSet<Entity>(kvp.Value);
+                foreach(Entity entity in entities)
                 {
                     entity.PreUpdate(deltaT);
                 }
