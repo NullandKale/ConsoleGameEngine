@@ -25,14 +25,20 @@ namespace ConsoleGameEngine.DataStructures
             return new Vec2(v.x, v.y);
         }
 
+        public Vec2i toVec2i()
+        {
+            return new Vec2i((int)x, (int)y);
+        }
+
+        // Existing operators
         public static Vec2 operator *(Vec2 v1, Vec2 v2)
         {
             return new Vec2(v1.x * v2.x, v1.y * v2.y);
         }
 
-        public static Vec2 operator *(Vec2 v1, float v2)
+        public static Vec2 operator *(Vec2 v1, float scalar)
         {
-            return new Vec2(v1.x * v2, v1.y * v2);
+            return new Vec2(v1.x * scalar, v1.y * scalar);
         }
 
         public static Vec2 operator +(Vec2 v1, Vec2 v2)
@@ -43,6 +49,35 @@ namespace ConsoleGameEngine.DataStructures
         public static Vec2 operator -(Vec2 v1, Vec2 v2)
         {
             return new Vec2(v1.x - v2.x, v1.y - v2.y);
+        }
+
+        // New operator: Division by a scalar
+        public static Vec2 operator /(Vec2 v1, float scalar)
+        {
+            return new Vec2(v1.x / scalar, v1.y / scalar);
+        }
+
+        // New operator: Negation
+        public static Vec2 operator -(Vec2 v)
+        {
+            return new Vec2(-v.x, -v.y);
+        }
+
+        // Implement Length method to calculate the magnitude of the vector
+        public float Length()
+        {
+            return (float)Math.Sqrt(x * x + y * y);
+        }
+
+        // Implement Normalized method to return a normalized version of the vector
+        public Vec2 Normalized()
+        {
+            float length = Length();
+            if (length == 0)
+            {
+                return new Vec2(0, 0);
+            }
+            return this / length;
         }
     }
 
@@ -143,9 +178,20 @@ namespace ConsoleGameEngine.DataStructures
 
             return false;
         }
+
+        public override int GetHashCode()
+        {
+            // Extract the bottom 16 bits of both x and y
+            int lower16BitsX = x & 0xFFFF;
+            int lower16BitsY = y & 0xFFFF;
+
+            // Shift the bits of x to the top 16 bits and combine with y using bitwise OR
+            return (lower16BitsX << 16) | lower16BitsY;
+        }
+
     }
 
-    public struct Vec3
+    public struct Vec3 : IEquatable<Vec3>
     {
         public float x;
         public float y;
@@ -416,13 +462,6 @@ namespace ConsoleGameEngine.DataStructures
             return new Vec3(r, g, b);
         }
 
-        //public static Vec3 hsb2rgb(Vec3 color)
-        //{
-        //    Vec3 rgb = Clamp(Abs(Mod(color.x * 6f + new Vec3(0, 4, 2), 6f) - 3f) - 1f, new Vec3(), new Vec3(1,1,1));
-        //    rgb = rgb * rgb * (3f - 2f * rgb);
-        //    return color.z * Mix(new Vec3(1, 1, 1), rgb, color.y);
-        //}
-
         public static bool Equals(Vec3 a, Vec3 b)
         {
             return a.x == b.x &&
@@ -434,6 +473,32 @@ namespace ConsoleGameEngine.DataStructures
         {
             return a.lengthSquared().CompareTo(b.lengthSquared());
         }
+
+        public override bool Equals(object? obj)
+        {
+            return obj is Vec3 vec && Equals(vec);
+        }
+
+        public bool Equals(Vec3 other)
+        {
+            return x == other.x &&
+                   y == other.y &&
+                   z == other.z;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(x, y, z);
+        }
+
+        public static Vec3 Lerp(Vec3 color0, Vec3 color1, float v)
+        {
+            float x = color0.x + (color1.x - color0.x) * v;
+            float y = color0.y + (color1.y - color0.y) * v;
+            float z = color0.z + (color1.z - color0.z) * v;
+            return new Vec3(x, y, z);
+        }
+
 
         public static implicit operator Vector3(Vec3 d)
         {
@@ -459,6 +524,17 @@ namespace ConsoleGameEngine.DataStructures
         {
             return Color.FromArgb((int)(v.x * 255), (int)(v.y * 255), (int)(v.z * 255f));
         }
+
+        public static bool operator ==(Vec3 left, Vec3 right)
+        {
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(Vec3 left, Vec3 right)
+        {
+            return !(left == right);
+        }
+
     }
 
     public struct Vec3i
