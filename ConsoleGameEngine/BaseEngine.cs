@@ -15,16 +15,26 @@ namespace ConsoleGameEngine
 
         protected Stopwatch timer;
         protected Thread thread;
+        public Random random;
 
         public IWindow window { get; protected set; }
 
         private Dictionary<int, HashSet<Entity>> entityList;
         protected List<BaseLayer> layers;
 
-        protected BaseEngine(IWindow window)
+        protected BaseEngine(IWindow window, int seed = 0)
         {
             this.window = window;
             window.SetOnWindowSizeUpdate(UpdateSize);
+
+            if (seed == 0)
+            {
+                random = new Random();
+            }
+            else
+            {
+                this.random = new Random(seed);
+            }
 
             thread = new Thread(threadAction);
             thread.IsBackground = true;
@@ -33,6 +43,11 @@ namespace ConsoleGameEngine
 
             entityList = new Dictionary<int, HashSet<Entity>>();
             layers = new List<BaseLayer>();
+        }
+
+        public float GetRandom(float min, float max)
+        {
+            return (float)(random.NextDouble() * (max - min) + min);
         }
 
         public void UpdateSize(Vec2i size)

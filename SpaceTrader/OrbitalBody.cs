@@ -39,7 +39,7 @@ namespace SpaceTrader
             );
 
             // Update the integer position for rendering
-            position = new Vec2i((int)(floatPosition.x + offset.x), (int)(floatPosition.y + offset.y));
+            position = new Vec2i((int)(floatPosition.x), (int)(floatPosition.y));
         }
 
         public override void DrawTo(BaseLayer layer)
@@ -51,18 +51,18 @@ namespace SpaceTrader
                 if (planetData.HasValue)
                 {
                     color = GetPlanetColor(planetData.Value.planetClass);
-                    DrawCircle(layer, position, radius, true, color, color); // Planets are filled with a single color
+                    DrawCircle(layer, position + offset.toVec2i(), radius, true, color, color); // Planets are filled with a single color
 
                     if (ShouldHaveRings(planetData.Value.planetClass))
                     {
                         Vec3 ringColor = GetRingColor(planetData.Value.planetClass);
-                        DrawCircle(layer, position, radius + 3, false, ringColor, ringColor); // Draw rings
+                        DrawCircle(layer, position + offset.toVec2i(), radius + 3, false, ringColor, ringColor); // Draw rings
                     }
                 }
                 else if (starData.HasValue)
                 {
                     color = GetStarColor(starData.Value.starClass);
-                    DrawCircle(layer, position, radius, true, color, color); // Stars are filled with a single color
+                    DrawCircle(layer, position + offset.toVec2i(), radius, true, color, color); // Stars are filled with a single color
                 }
             }
             else

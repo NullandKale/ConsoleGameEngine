@@ -9,6 +9,7 @@ namespace SpaceTrader.ShipSystems
         public float brakePower; // max rate of change when breaking
 
         public Vec2 velocity = new Vec2(); // Current ships velocity
+        public Vec2 maxVelocity = new Vec2(); // Max Velocity;
 
         public Vec2 thrusters = new Vec2(); // Current acceleration due to thrusters
         public Vec2 gravityAcceleration = new Vec2(); // Current acceleration due to gravity
@@ -32,9 +33,17 @@ namespace SpaceTrader.ShipSystems
                     break;
             }
 
-            ApplyThrust(thrustDirection);
+            if(keyPress.Key == ConsoleKey.W
+                || keyPress.Key == ConsoleKey.A
+                || keyPress.Key == ConsoleKey.S
+                || keyPress.Key == ConsoleKey.D)
+            {
+                ApplyThrust(thrustDirection);
+            }
 
         }
+
+
 
         public void ApplyThrust(Vec2 thrustDirection)
         {
@@ -76,21 +85,26 @@ namespace SpaceTrader.ShipSystems
         }
 
 
+
+        public void SetThrust(Vec2 normalizedThrust)
+        {
+            thrusters = normalizedThrust * (100 * baseThrust / ship.weight);
+        }
+
         public override void Update(float deltaT)
         {
             // Incorporate gravity effect
             gravityAcceleration = ship.solarSystemData.GetGravityAt(ship.positionF);
             Vec2 gravityVelocityChange = gravityAcceleration * deltaT;
 
-            // Apply thrusters to velocity
-            Vec2 thrustVelocityChange = thrusters / ship.weight;
-            velocity += gravityVelocityChange + thrustVelocityChange;
+            // Apply thrusters to velocity, then apply damping
+            velocity += (thrusters / ship.weight + gravityVelocityChange) * deltaT;
+            velocity *= 0.95f; // Apply damping factor
 
-            // Apply damping to velocity
-            float dampingFactor = 0.95f; // Adjust as needed
-            velocity *= dampingFactor;
+            // Clamp velocity to maxVelocity
+            ClampVelocity();
 
-            // Update ship's position
+            // Update ship's position based on the clamped velocity
             ship.positionF += velocity * deltaT;
             ship.position = ship.positionF.toVec2i();
 
@@ -99,5 +113,13 @@ namespace SpaceTrader.ShipSystems
                          $"GRAV: {gravityAcceleration.x,7:F5},{gravityAcceleration.y,7:F5} | " +
                          $"VEL: {velocity.x,7:F5},{velocity.y,7:F5}");
         }
+
+        private void ClampVelocity()
+        {
+            // Clamp the velocity in each dimension independently to respect maxVelocity
+            velocity.x = Math.Max(Math.Min(velocity.x, maxVelocity.x), -maxVelocity.x);
+            velocity.y = Math.Max(Math.Min(velocity.y, maxVelocity.y), -maxVelocity.y);
+        }
+
     }
 }

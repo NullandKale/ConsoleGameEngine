@@ -10,8 +10,10 @@ namespace SpaceTrader.ShipSystems.Sensors
     public class SensorsSystem : ShipSystem
     {
         public float SensorDistance;
-        private bool isStarSelected = true; // Indicates if the selected body is a star
-        private int selectedIndex = 0; // Index of the selected star or planet
+        public bool isStarSelected = true; // Indicates if the selected body is a star
+        public int selectedIndex = 0; // Index of the selected star or planet
+        public Vec2i distanceVector = new Vec2i(); // distance to selected star or planet
+        public Vec2i position = new Vec2i(); // position of selected star or planet
         private bool detailMode = false;
 
         public SensorsSystem(Ship ship, int statusPositionOffsetY)
@@ -91,42 +93,24 @@ namespace SpaceTrader.ShipSystems.Sensors
 
         private void UpdateStatusBasedOnSelection()
         {
-            if (!detailMode)
+            if (isStarSelected)
             {
-                Vec2i position;
-                if (isStarSelected)
+                if (selectedIndex >= 0 && selectedIndex < ship.solarSystemData.stars.Count)
                 {
-                    if (selectedIndex >= 0 && selectedIndex < ship.solarSystemData.stars.Count)
-                    {
-                        var star = ship.solarSystemData.stars[selectedIndex];
-                        position = star.position;
-                        Vec2i distanceVector = position - ship.positionF.toVec2i();
-                        UpdateStatus($"Ship Position: X:{ship.positionF.x,7:F2}, Y:{ship.positionF.y,7:F2} | Selected Star Distance: X:{distanceVector.x,7:F2}, Y:{distanceVector.y,7:F2}");
-                    }
-                }
-                else
-                {
-                    if (selectedIndex >= 0 && selectedIndex < ship.solarSystemData.planets.Count)
-                    {
-                        var planet = ship.solarSystemData.planets[selectedIndex];
-                        position = planet.position;
-                        Vec2i distanceVector = position - ship.positionF.toVec2i();
-                        UpdateStatus($"Ship Position: X:{ship.positionF.x,7:F2}, Y:{ship.positionF.y,7:F2} | Selected Planet Distance: X:{distanceVector.x,7:F2}, Y:{distanceVector.y,7:F2}");
-                    }
+                    var star = ship.solarSystemData.stars[selectedIndex];
+                    position = star.position;
+                    distanceVector = position - ship.positionF.toVec2i();
+                    UpdateStatus($"Ship Position: X:{ship.positionF.x,7:F2}, Y:{ship.positionF.y,7:F2} | Selected Star Distance: X:{distanceVector.x,7:F2}, Y:{distanceVector.y,7:F2}");
                 }
             }
             else
             {
-                // Handle detail mode
-                if (isStarSelected && selectedIndex < ship.solarSystemData.stars.Count)
-                {
-                    var star = ship.solarSystemData.stars[selectedIndex];
-                    UpdateStatus($"Star Detail - Class: {star.starClass}, Radius: {star.radius}, Position: X:{star.position.x,7:F2}, Y:{star.position.y,7:F2}, Orbital Speed: {star.orbitalSpeed:F2}");
-                }
-                else if (!isStarSelected && selectedIndex < ship.solarSystemData.planets.Count)
+                if (selectedIndex >= 0 && selectedIndex < ship.solarSystemData.planets.Count)
                 {
                     var planet = ship.solarSystemData.planets[selectedIndex];
-                    UpdateStatus($"Planet Detail - Class: {planet.planetClass}, Atmosphere: {planet.atmosphereType}, Temp: {planet.averageTemperature:F2}, Position: X:{planet.position.x,7:F2}, Y:{planet.position.y,7:F2}, Orbital Speed: {planet.orbitalSpeed:F2}");
+                    position = planet.position;
+                    distanceVector = position - ship.positionF.toVec2i();
+                    UpdateStatus($"Ship Position: X:{ship.positionF.x,7:F2}, Y:{ship.positionF.y,7:F2} | Selected Planet Distance: X:{distanceVector.x,7:F2}, Y:{distanceVector.y,7:F2}");
                 }
             }
         }

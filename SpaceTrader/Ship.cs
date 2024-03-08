@@ -3,20 +3,21 @@ using ConsoleGameEngine.DataStructures;
 using ConsoleGameEngine.Entities;
 using ConsoleGameEngine.Layers;
 using SpaceTrader.ShipSystems;
+using SpaceTrader.ShipSystems.AutoPilot;
 using SpaceTrader.ShipSystems.Engine;
 using SpaceTrader.ShipSystems.Sensors;
 
 namespace SpaceTrader
 {
-
-
     public class Ship : Entity
     {
         public SpaceTraderEngine gameEngine;
 
         public SolarSystemData solarSystemData;
 
-        private List<ShipSystem> systems = new List<ShipSystem>();
+        public EngineSystem engineSystem;
+        public SensorsSystem sensorsSystem;
+        public AutoPilotSystem autopilotSystem;
 
         public string STATUS = "DEFAULT";
         public Vec2 positionF; // Position using float for precision
@@ -30,52 +31,40 @@ namespace SpaceTrader
             positionF = new Vec2(); // Initialize float position
             weight = shipWeight; // Set the ship's weight
             
-            systems.Add(new StandardEngine(this, 1));
-            systems.Add(new StandardSensors(this, 2));
+            engineSystem = new StandardEngine(this, 1);
+            sensorsSystem = new StandardSensors(this, 2);
+            autopilotSystem = new AutoPilotSystem(this, 3);
                 
             Input.Add(OnKey);
         }
 
         private void OnKey(ConsoleKeyInfo keyPress)
         {
-            foreach (var system in systems)
-            {
-                if (ShipSystem.CanProcessInput(system))
-                {
-                    system.OnKeyPressed(keyPress);
-                }
-            }
+            engineSystem.OnKeyPressed(keyPress);
+            sensorsSystem.OnKeyPressed(keyPress);
+            autopilotSystem.OnKeyPressed(keyPress);
         }
 
         public override void Update(float deltaT)
         {
             solarSystemData = gameEngine.solarSystem.solarSystemData;
 
-            foreach (var system in systems)
-            {
-                if (ShipSystem.CanProcessInput(system))
-                {
-                    system.Update(deltaT);
-                }
-            }
+            engineSystem.Update(deltaT);
+            sensorsSystem.Update(deltaT);
+            autopilotSystem.Update(deltaT);
 
             gameEngine.CenterWindow(position.x, position.y);
         }
 
         public override void DrawTo(BaseLayer layer)
         {
+            engineSystem.DrawTo(layer);
+            sensorsSystem.DrawTo(layer);
+            autopilotSystem.DrawTo(layer);
+
             // draw @ position on map
             Vec2i windowOffset = gameEngine.GetWindowOffset();
-
             layer.WriteChexel(new Chexel('@', new Vec3(1, 0, 1), new Vec3()), position + windowOffset);
-
-            foreach (var system in systems)
-            {
-                if (ShipSystem.CanProcessInput(system))
-                {
-                    system.DrawTo(layer);
-                }
-            }
         }
 
         public override Vec2i GetSize()

@@ -79,6 +79,27 @@ namespace ConsoleGameEngine.DataStructures
             }
             return this / length;
         }
+
+        public static float Dot(Vec2 v1, Vec2 v2)
+        {
+            return v1.x * v2.x + v1.y * v2.y;
+        }
+
+        public Vec2 Perpendicular()
+        {
+            // Rotate 90 degrees counterclockwise
+            return new Vec2(-y, x);
+        }
+        public Vec2 PerpendicularClockwise()
+        {
+            // Rotate 90 degrees clockwise
+            return new Vec2(y, -x);
+        }
+
+        public float LengthSquared()
+        {
+            return x * x + y * y;
+        }
     }
 
     public struct Vec2i

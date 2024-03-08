@@ -1,4 +1,5 @@
-﻿using ConsoleGameEngine.Layers;
+﻿using ConsoleGameEngine.DataStructures;
+using ConsoleGameEngine.Layers;
 
 namespace SpaceTrader.ShipSystems.Engine
 {
@@ -8,6 +9,7 @@ namespace SpaceTrader.ShipSystems.Engine
         {
             baseThrust = 0.00005f; // Example value, adjust as needed
             brakePower = 0.0008f; // Example value, adjust as needed
+            maxVelocity = new Vec2(0.03f, 0.03f);
         }
 
     }
